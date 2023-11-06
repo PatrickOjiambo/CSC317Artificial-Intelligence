@@ -1,38 +1,10 @@
-"""Runner for my vacuum cleaner program"""
-import sys
+"""The module world"""
 from goal_state import define_goal_state
-
-algorithm = sys.argv[1]
-initial_world = sys.argv[2]
-file = open(initial_world)
-raw_world_grid = file.readlines()
-start_row = None
-start_col = None
-number_of_dirts = 0
-dirt_locations = []
-world_grid = []
-for r in range(len(raw_world_grid)):
-    line = []
-    if raw_world_grid[r][-1] == '\n':
-        raw_world_grid[r] = raw_world_grid[r][:-1]
-    world_grid.append(line)
-    for c in (range(len(raw_world_grid[r]))):
-        line.append(raw_world_grid[r][c])
-        if raw_world_grid[r][c] == 'a':
-            world_grid[r][c] = ' '
-            start_row = r
-            start_col = c
-        if raw_world_grid[r][c].isdigit():
-            dirt_locations.append((r,c))
-            number_of_dirts +=int(raw_world_grid[r][c])
-"""Up until this point, I have just recorded the starting position of the 
-cleaning agent 'a' as well as the number of dirts and their current positions(like a point in a plane)
-"""
+from main import world_grid, start_col,start_row
 
 goal_state = define_goal_state(world_grid)
 R = len(world_grid)
 C = len(world_grid[0])
-
 
 class World:
     """
@@ -73,7 +45,7 @@ class World:
             self.data[self.location[0]][self.location[1]] = ' '
     def find_path(self):
         """Find path to the dirt"""
-        def reverse_list(got_list):
+        def reverse_list(list):
             """
             Reverse list.
             """
@@ -157,9 +129,9 @@ class World:
             if world_grid[possible_r][possible_c] == '#':
                 continue
 
-            child = World(possible_r, possible_c, current_node.data)
+            child = Node(possible_r, possible_c, current_node.data)
             child.parent = current_node
-            if i == 0 and child.is_dirt():
+            if i == 0 and child.isDirt():
                 child.action = "suck"
                 child.suck()
                 child.cost = child.parent.cost + 2
@@ -182,9 +154,9 @@ class World:
                 children.append(child)
 
         return children
-    def depth_first_search():
+    def depth_first_search(self):
         """Implementation using depth_first search algorithm"""
-        start_node = World(start_row, start_col, world_grid)
+        start_node = Node(start_row, start_col, world_grid)
 
         visited = []
         stack = [start_node]
@@ -197,14 +169,14 @@ class World:
             if current_node.state not in visited:
                 visited.append(current_node.state)
 
-            children = World.actions(current_node)
+            children = actions(current_node)
 
             for child in children:
                 if child.state not in visited:
                     stack.append(child)
     def greedy_search():
         """Implementaion using greedy search"""
-        start_node = World(start_row, start_col, world_grid)
+        start_node = Node(start_row, start_col, world_grid)
 
         visited = []
         p_queue = [start_node]
@@ -218,27 +190,10 @@ class World:
             if current_node.state not in visited:
                 visited.append(current_node.state)
 
-            children = World.actions(current_node)
+            children = actions(current_node)
 
             for child in children:
                 if child.state not in visited:
                     p_queue.append(child)
         
-
-
-expanded_nodes = None
-path = None
-cost = None
-initial_heuristic=None
-if(algorithm == "depth_first"):
-    expanded_nodes, path, cost = World.depth_first_search()
-elif(algorithm == "greedy_search"):
-    expanded_nodes, path, cost = World.greedy_search()
-else:
-    "Check your commandline arguments you lambistic motherfucker"
-print(f"The number of nodes that have been expanded: {expanded_nodes}")
-print("path taken by the vacuum cleaner to the goal:", end=' ')
-print(*path, sep=' ')
-print(f"Path cost of the solution: {cost}")
-print("If you watched the videos I sent you would have known that greedy search is supposed to be better")
-print("NB: Depth first search is uninformed search- no intelligence\nGreedy search on the other hand has some information about the environment hence more intelligent. It falls under informed search.")
+    

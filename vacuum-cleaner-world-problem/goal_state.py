@@ -1,5 +1,5 @@
 """Defines the goal test"""
-def goal_state(world):
+def define_goal_state(world):
     """Defines the goal state. Replaces all digits with spaces.
     Essentially checks that there is no dirt.
     Args:
